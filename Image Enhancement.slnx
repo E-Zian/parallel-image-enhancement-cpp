@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="Image Enhancement/Image Enhancement.vcxproj" Id="c1e0a60f-e5e4-462f-90aa-acae9ec63ae2" />
+</Solution>
