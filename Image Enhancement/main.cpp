@@ -5,9 +5,11 @@
 int main() {
 	std::cout << "Generating Gaussian Kernel with sigma = 1.0\n";
 	
+	// Kernel initialisation
 	const GaussianKernel testingKernal{ 1.0f };
 	testingKernal.displayKernel();
-
+	
+	// Reading image
 	std::string image_path = "C:/Users/User/Desktop/Egin/opencvTesting/testingIMG.jpeg";
 
 	cv::Mat image = cv::imread(image_path, cv::IMREAD_GRAYSCALE);
@@ -16,18 +18,22 @@ int main() {
 		std::cerr << "Error: Could not load image at " << image_path << std::endl;
 		return -1;
 	}
+	uchar* inputImage = image.data;
 
-	//cv::imshow("Original Image", image);
-	//cv::waitKey(0);
+	// Output image
+	std::vector<unsigned char> outputImage(image.cols * image.rows);
 
-	uchar* imageByteArray = image.data;         
-	size_t numBytes = image.total() * image.elemSize(); 
 	std::cout << "Image size: " << image.cols << " x " << image.rows << std::endl;
-	std::cout << "Total bytes: " << numBytes << std::endl;
 
-	 //Example: print first 10 pixel values
-	for (int i = 0; i < 10; i++) {
-		std::cout << (int)imageByteArray[i] << " ";
-	}
-	std::cout << std::endl;
+	// Convolving
+	testingKernal.convolve(inputImage, outputImage.data(), image.cols, image.rows);
+
+	cv::Mat outputMat(image.rows, image.cols, CV_8UC1, outputImage.data());
+
+	// Display images
+	cv::imshow("Original Image", image);
+	cv::imshow("Blurred Image", outputMat);
+	cv::waitKey(0);
+
+
 }

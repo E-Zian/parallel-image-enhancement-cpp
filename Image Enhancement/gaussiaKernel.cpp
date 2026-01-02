@@ -7,16 +7,16 @@
 GaussianKernel::GaussianKernel(float sigma)
 	: m_sigma{ sigma },
 	m_radius{ static_cast<int>(std::ceil(3 * sigma)) },
-	m_kernalSize{ 2 * m_radius + 1 },
-	m_kernel(m_kernalSize* m_kernalSize)
+	m_kernelSize{ 2 * m_radius + 1 },
+	m_kernel(m_kernelSize* m_kernelSize)
 {
 	generateKernel();
 }
 
 void GaussianKernel::displayKernel() const {
-	for (int i = 0; i < m_kernalSize; ++i) {
-		for (int j = 0; j < m_kernalSize; ++j) {
-			std::cout << m_kernel[i * m_kernalSize + j] << " ";
+	for (int i = 0; i < m_kernelSize; ++i) {
+		for (int j = 0; j < m_kernelSize; ++j) {
+			std::cout << m_kernel[i * m_kernelSize + j] << " ";
 		}
 		std::cout << std::endl;
 	}
@@ -34,12 +34,12 @@ void GaussianKernel::generateKernel() {
 		for (int col = -m_radius; col <= m_radius; ++col) {
 			float value = unnormalizedGaussian(col, row);
 			sum += value;
-			m_kernel[(row + m_radius) * m_kernalSize + (col + m_radius)] = value;
+			m_kernel[(row + m_radius) * m_kernelSize + (col + m_radius)] = value;
 		}
 	}
 
 	// Normalize the kernel
-	for (int i = 0; i < m_kernalSize * m_kernalSize; ++i) {
+	for (int i = 0; i < m_kernelSize * m_kernelSize; ++i) {
 		m_kernel[i] /= sum;
 	}
 }
@@ -48,10 +48,13 @@ void GaussianKernel::convolve(const unsigned char* inputImage, unsigned char* ou
 	using clock = std::chrono::high_resolution_clock;
 	auto start = clock::now();
 
+	// Each pixel in the image
 	for (int row = 0; row < height; ++row) {
 		for (int col = 0; col < width; ++col) {
 
 			float sum = 0.0f;
+
+			// Applying the kernel
 
 			for (int kRow = -m_radius; kRow <= m_radius; ++kRow) {
 				for (int kCol = -m_radius; kCol <= m_radius; ++kCol) {
@@ -60,7 +63,7 @@ void GaussianKernel::convolve(const unsigned char* inputImage, unsigned char* ou
 					if (col + kCol < 0 || row + kRow < 0 || col + kCol >=width || row + kRow >=height) {
 						continue;
 					}
-					sum += m_kernel[(kCol + m_radius) + ((kRow + m_radius) * m_kernalSize)] * inputImage[(col + kCol) + (row + kRow * width)];
+					sum += m_kernel[(kCol + m_radius) + ((kRow + m_radius) * m_kernelSize)] * inputImage[(col + kCol)  + (row + kRow ) * width];
 				}
 			}
 

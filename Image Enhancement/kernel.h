@@ -19,7 +19,7 @@ public:
 private:
     float m_sigma;
     int m_radius;
-    int m_kernalSize;
+    int m_kernelSize;
     std::vector<float> m_kernel;
     
     float unnormalizedGaussian(int x, int y);
