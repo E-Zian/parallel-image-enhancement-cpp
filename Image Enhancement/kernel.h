@@ -7,10 +7,8 @@
 class GaussianKernel
 {
 public:
-	// Constructor
     explicit GaussianKernel(float sigma = 1);
 
-	// Display the kernel values
     void displayKernel() const;
 
 	// Apply convolution to an input image

@@ -2,7 +2,7 @@
 #include <cmath>
 #include <iostream>
 #include <algorithm>
-#include <chrono>
+
 
 GaussianKernel::GaussianKernel(float sigma)
 	: m_sigma{ sigma },
@@ -45,14 +45,14 @@ void GaussianKernel::generateKernel() {
 }
 
 void GaussianKernel::convolve(const unsigned char* inputImage, unsigned char* outputImage, int width, int height) const {
-	using clock = std::chrono::high_resolution_clock;
-	auto start = clock::now();
+
 
 	// Each pixel in the image
 	for (int row = 0; row < height; ++row) {
 		for (int col = 0; col < width; ++col) {
 
 			float sum = 0.0f;
+
 
 			// Applying the kernel
 
@@ -73,8 +73,7 @@ void GaussianKernel::convolve(const unsigned char* inputImage, unsigned char* ou
 
 		}
 	}
-	auto end = clock::now();
 
-	std::chrono::duration<double, std::milli> elapsed = end - start;
-	std::cout << "Time: " << elapsed.count() << " ms\n";
+
 }
+
