@@ -1,7 +1,7 @@
 #include <iostream>
 #include <chrono>
 #include<opencv2/opencv.hpp>
-#include "kernel.h"
+#include "gaussianKernel.h"
 
 int main() {
 	using clock = std::chrono::high_resolution_clock;
@@ -12,7 +12,7 @@ int main() {
 	testingKernal.displayKernel();
 	
 	// Reading image
-	std::string image_path = "C:/Users/User/Desktop/Egin/opencvTesting/testingIMG.jpeg";
+	std::string image_path = "C:/Users/User/Desktop/Egin/opencvTesting/trees.jpg";
 
 	cv::Mat image = cv::imread(image_path, cv::IMREAD_GRAYSCALE);
 
@@ -53,6 +53,10 @@ int main() {
 	cv::Mat enhancedImage(image.rows, image.cols, CV_8UC1, enhancedImageArray.data());
 
 	// Display images
+	cv::namedWindow("Original Image", cv::WINDOW_NORMAL);
+	cv::namedWindow("Blurred Image", cv::WINDOW_NORMAL);
+	cv::namedWindow("Image Edges", cv::WINDOW_NORMAL);
+	cv::namedWindow("Enhanced Image", cv::WINDOW_NORMAL);
 	cv::imshow("Original Image", image);
 	cv::imshow("Blurred Image", lowPassImage);
 	cv::imshow("Image Edges", highPassImage);

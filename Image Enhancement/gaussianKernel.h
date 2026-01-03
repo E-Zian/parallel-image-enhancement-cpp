@@ -1,6 +1,6 @@
 
-#ifndef KERNEL_H
-#define KERNEL_H
+#ifndef GAUSSIAN_KERNEL_H
+#define GAUSSIAN_KERNEL_H
 
 #include <vector>
 
