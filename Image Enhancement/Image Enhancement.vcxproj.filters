@@ -18,12 +18,12 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="gaussiaKernel.cpp">
+    <ClCompile Include="GaussiaKernel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="gaussianKernel.h">
+    <ClInclude Include="GaussianKernel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
