@@ -12,6 +12,9 @@ GaussianKernel::GaussianKernel(float sigma)
 	m_kernel(m_kernelSize),
 	m_kernel1D(m_kernelDiameter)
 {
+	if (sigma <= 0.0f) {
+		throw std::invalid_argument("GaussianKernel: sigma must be > 0");
+	}
 	generate2DKernel();
 	generate1DKernels();
 }
@@ -70,7 +73,27 @@ void GaussianKernel::generate2DKernel() {
 	}
 }
 
-std::vector<unsigned char> GaussianKernel::convolve_gray(const std::vector<unsigned char>& inputImage, int width, int height) const {
+std::vector<unsigned char> GaussianKernel::convolve(const cv::Mat& image, int width, int height) const {
+	if (image.channels() == 3) {
+		// Colored image
+		std::vector<unsigned char> inputImage(
+			image.data,                       // pointer to first pixel
+			image.data + image.total() * image.channels()         // pointer past last pixel
+		);
+		return convolveColored(inputImage, width, height);
+	}
+	else {
+		// Grayscale image
+		std::vector<unsigned char> inputImage(
+			image.data,                       // pointer to first pixel
+			image.data + image.total()          // pointer past last pixel
+		);
+		return convolveGray(inputImage, width, height);
+	}
+}
+
+
+std::vector<unsigned char> GaussianKernel::convolveGray(const std::vector<unsigned char>& inputImage, int width, int height) const {
 
 	// Temporary horizontal image
 	std::vector<float> horizontalTemp(width * height);
@@ -104,9 +127,56 @@ std::vector<unsigned char> GaussianKernel::convolve_gray(const std::vector<unsig
 				static_cast<unsigned char>(std::clamp(sum, 0.0f, 255.0f));
 		}
 	}
-	
+
 	return outputImage;
 
 
 }
 
+std::vector<unsigned char> GaussianKernel::convolveColored(const std::vector<unsigned char>& inputImage, int width, int height) const {
+
+
+	// Temporary horizontal image
+	std::vector<float> horizontalTemp(width * height * 3);
+	std::vector<unsigned char> outputImage(width * height * 3);
+
+	// Each pixel in the image
+	for (int spectrum{ 0 }; spectrum < 3; ++spectrum) {
+
+		// Horizontal pass
+		for (int row = 0; row < height; ++row) {
+			for (int col = 0; col < width; ++col) {
+
+				float sum = 0.0f;
+				for (int k = -m_radius; k <= m_radius; ++k) {
+
+					// The affected columns in horizontal pass
+					int c = col + k;
+					if (c >= 0 && c < width) {
+						sum += m_kernel1D[k + m_radius] * inputImage[(c + row * width) * 3 + spectrum];
+					}
+				}
+				horizontalTemp[(col + row * width) * 3 + spectrum] = sum;
+			}
+		}
+
+		// Vertical pass
+		for (int row = 0; row < height; ++row) {
+			for (int col = 0; col < width; ++col) {
+				float sum = 0.0f;
+				for (int k = -m_radius; k <= m_radius; ++k) {
+					int r = row + k;
+					if (r >= 0 && r < height) {
+						sum += m_kernel1D[k + m_radius] * horizontalTemp[(col + r * width) * 3 + spectrum];
+					}
+				}
+				outputImage[(col + row * width) * 3 + spectrum] =
+					static_cast<unsigned char>(std::clamp(sum, 0.0f, 255.0f));
+			}
+		}
+	}
+
+
+	return outputImage;
+
+}

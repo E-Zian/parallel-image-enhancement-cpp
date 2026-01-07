@@ -3,6 +3,7 @@
 #define GAUSSIAN_KERNEL_H
 
 #include <vector>
+#include<opencv2/opencv.hpp>
 
 class GaussianKernel
 {
@@ -12,7 +13,7 @@ public:
     void display1DKernel() const;
 
 	// Apply convolution to an input image
-    std::vector<unsigned char> convolve_gray(const std::vector<unsigned char>& inputImage, int width, int height) const;
+    std::vector<unsigned char> convolve(const cv::Mat& image, int width, int height) const;
 
 private:
     float m_sigma;
@@ -22,6 +23,10 @@ private:
 
     std::vector<float> m_kernel;
     std::vector<float> m_kernel1D;
+
+    std::vector<unsigned char> convolveGray(const std::vector<unsigned char>& inputImage, int width, int height) const;
+
+    std::vector<unsigned char> convolveColored(const std::vector<unsigned char>& inputImage, int width, int height) const;
 
     float unnormalizedGaussian(int x, int y);
     void generate2DKernel();
