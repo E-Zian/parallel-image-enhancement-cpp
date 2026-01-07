@@ -21,9 +21,15 @@
     <ClCompile Include="GaussiaKernel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ImageEnhancer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GaussianKernel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageEnhancer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
