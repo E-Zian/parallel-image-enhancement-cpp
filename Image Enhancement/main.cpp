@@ -14,20 +14,19 @@ int main() {
 	// Reading image
 	std::string image_path = "C:/Users/User/Desktop/Egin/opencvTesting/lenna.png";
 
-	cv::Mat image = cv::imread(image_path, cv::IMREAD_GRAYSCALE);
-
-	//cv::Mat coloredImage = cv::imread(image_path, cv::IMREAD_COLOR);
-
-	if (image.empty()) {
-		std::cerr << "Error: Could not load image at " << image_path << std::endl;
-		return -1;
-	}
-	//if (coloredImage.empty()) {
-	//	std::cerr << "Error: Could not load colored image at " << image_path << std::endl;
+	//cv::Mat image = cv::imread(image_path, cv::IMREAD_GRAYSCALE);
+	//if (image.empty()) {
+	//	std::cerr << "Error: Could not load image at " << image_path << std::endl;
 	//	return -1;
 	//}
 
-	//enhanceImageGrayScale(image, testingKernal);
+	cv::Mat image = cv::imread(image_path, cv::IMREAD_COLOR);
+
+	if (image.empty()) {
+		std::cerr << "Error: Could not load colored image at " << image_path << std::endl;
+		return -1;
+	}
+
 	
 	enhanceImage(image, testingKernal);
 
@@ -50,11 +49,10 @@ void enhacneImageColored(const cv::Mat& image, const GaussianKernel& kernel)
 
 
 	// Apply Gaussian Blur (Low Pass Filter)
-	//std::vector<unsigned char> denoisedImageArray = kernel.convolveGray(inputImage, image.cols, image.rows);
-	std::vector<unsigned char> lowPassImageArray = kernel.convolve(image, image.cols, image.rows);
+	std::vector<unsigned char> denoisedImageArray = kernel.convolve(image, image.cols, image.rows);
+	cv::Mat denoisedImage(image.rows, image.cols, CV_8UC3, denoisedImageArray.data());
 
-	//std::vector<unsigned char> lowPassImageArray = testingKernal.convolve(inputImage, image.cols, image.rows);
-	//cv::Mat denoisedImage(image.rows, image.cols, CV_8UC1, denoisedImageArray.data());
+	std::vector<unsigned char> lowPassImageArray = kernel.convolve(denoisedImage, image.cols, image.rows);
 	cv::Mat lowPassImage(image.rows, image.cols, CV_8UC3, lowPassImageArray.data());
 
 
@@ -63,14 +61,14 @@ void enhacneImageColored(const cv::Mat& image, const GaussianKernel& kernel)
 	for (int i = 0; i < image.rows * image.cols * image.channels(); ++i) {
 		highPassImageArray[i] = static_cast<int>(image.data[i]) - static_cast<int>(lowPassImageArray[i]);
 	}
-	std::vector<unsigned char> highPassVisualliserArray(image.cols * image.rows);
+	std::vector<unsigned char> highPassVisualliserArray(image.cols * image.rows * image.channels());
 	for (int i = 0; i < image.rows * image.cols * image.channels(); ++i) {
 		highPassVisualliserArray[i] = static_cast<unsigned char>(std::clamp(highPassImageArray[i] + 127, 0, 255));
 	}
 	cv::Mat highPassImage(image.rows, image.cols, CV_8UC3, highPassVisualliserArray.data());
 
 	float k = 1.0f;
-	std::vector<unsigned char> enhancedImageArray(image.cols * image.rows);
+	std::vector<unsigned char> enhancedImageArray(image.cols * image.rows * image.channels());
 	for (int i = 0; i < image.rows * image.cols * image.channels(); ++i) {
 		float enhanced = static_cast<float>(image.data[i]) + highPassImageArray[i] * k;
 		enhancedImageArray[i] = static_cast<unsigned char>(std::clamp(enhanced, 0.0f, 255.0f));
@@ -80,7 +78,6 @@ void enhacneImageColored(const cv::Mat& image, const GaussianKernel& kernel)
 	// Display images
 
 	cv::imshow("Original Image", image);
-	//cv::imshow("Blurred Image", denoisedImage);
 	cv::imshow("LowPass Image", lowPassImage);
 
 	cv::imshow("Image Edges", highPassImage);
