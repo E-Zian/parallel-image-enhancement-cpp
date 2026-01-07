@@ -8,7 +8,7 @@ int main() {
 	auto start = clock::now();
 	
 	// Kernel initialisation
-	const GaussianKernel testingKernal{ 3.0f };
+	const GaussianKernel testingKernal{ 5.0f };
 	std::cout << "Generated Gaussian Kernel\n";
 	testingKernal.display2DKernel();
 	std::cout << "Generated Gaussian 1D Kernel\n";
@@ -35,11 +35,11 @@ int main() {
 	// Apply Gaussian Blur (Low Pass Filter)
 	std::vector<unsigned char> denoisedImageArray = testingKernal.convolve(inputImage, image.cols, image.rows);
 	std::vector<unsigned char> lowPassImageArray = testingKernal.convolve(denoisedImageArray, image.cols, image.rows);
+
+	//std::vector<unsigned char> lowPassImageArray = testingKernal.convolve(inputImage, image.cols, image.rows);
 	cv::Mat denoisedImage(image.rows, image.cols, CV_8UC1, denoisedImageArray.data());
 	cv::Mat lowPassImage(image.rows, image.cols, CV_8UC1, lowPassImageArray.data());
-	for (int i = 0; i < 10; ++i)
-		std::cout << (int)denoisedImageArray[i] << " ";
-	std::cout << "\n";
+
 
 	// High pass image
 	std::vector<int> highPassImageArray(image.cols * image.rows);
@@ -61,12 +61,7 @@ int main() {
 	cv::Mat enhancedImage(image.rows, image.cols, CV_8UC1, enhancedImageArray.data());
 
 	// Display images
-	cv::namedWindow("Original Image", cv::WINDOW_NORMAL);
-	cv::namedWindow("Blurred Image", cv::WINDOW_NORMAL);
-	cv::namedWindow("LowPass Image", cv::WINDOW_NORMAL);
 
-	cv::namedWindow("Image Edges", cv::WINDOW_NORMAL);
-	cv::namedWindow("Enhanced Image", cv::WINDOW_NORMAL);
 	cv::imshow("Original Image", image);
 	cv::imshow("Blurred Image", denoisedImage);
 	cv::imshow("LowPass Image", lowPassImage);

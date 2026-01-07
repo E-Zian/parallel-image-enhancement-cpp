@@ -70,7 +70,7 @@ void GaussianKernel::generate2DKernel() {
 	}
 }
 
-std::vector<unsigned char> GaussianKernel::convolve(const std::vector<unsigned char>& inputImage, int width, int height) const {
+std::vector<unsigned char> GaussianKernel::convolve_gray(const std::vector<unsigned char>& inputImage, int width, int height) const {
 
 	// Temporary horizontal image
 	std::vector<float> horizontalTemp(width * height);
