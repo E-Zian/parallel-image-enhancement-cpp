@@ -13,7 +13,7 @@ public:
     void display1DKernel() const;
 
 	// Apply convolution to an input image
-    std::vector<unsigned char> convolve(const cv::Mat& image, int width, int height) const;
+    std::vector<unsigned char> convolve(const cv::Mat& image) const;
 
 private:
     float m_sigma;

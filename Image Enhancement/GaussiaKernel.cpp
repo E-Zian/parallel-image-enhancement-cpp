@@ -73,22 +73,27 @@ void GaussianKernel::generate2DKernel() {
 	}
 }
 
-std::vector<unsigned char> GaussianKernel::convolve(const cv::Mat& image, int width, int height) const {
+std::vector<unsigned char> GaussianKernel::convolve(const cv::Mat& image) const {
+	int width = image.cols;
+	int height = image.rows;
 	if (image.channels() == 3) {
 		// Colored image
 		std::vector<unsigned char> inputImage(
-			image.data,                       // pointer to first pixel
-			image.data + image.total() * image.channels()         // pointer past last pixel
+			image.data,                       
+			image.data + image.total() * image.channels()         
 		);
 		return convolveColored(inputImage, width, height);
 	}
-	else {
+	else if (image.channels() == 1) {
 		// Grayscale image
 		std::vector<unsigned char> inputImage(
-			image.data,                       // pointer to first pixel
-			image.data + image.total()          // pointer past last pixel
+			image.data,                       
+			image.data + image.total()          
 		);
 		return convolveGray(inputImage, width, height);
+	}
+	else {
+		throw std::runtime_error("GaussianKernel::convolve: Unsupported number of channels");
 	}
 }
 
