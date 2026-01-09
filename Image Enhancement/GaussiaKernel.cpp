@@ -2,7 +2,6 @@
 #include <cmath>
 #include <iostream>
 #include <algorithm>
-#include <mutex>
 #include <thread>
 
 GaussianKernel::GaussianKernel(float sigma)

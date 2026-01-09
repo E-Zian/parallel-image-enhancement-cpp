@@ -46,3 +46,4 @@ Release/
 x64/
 build/
 out/
+*.png
