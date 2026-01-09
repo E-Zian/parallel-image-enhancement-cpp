@@ -19,7 +19,7 @@ int main(int argc, char** argv) {
 	const GaussianKernel testingKernal{ 5.0f };
 
 	// Reading image
-	std::string image_path{ "C:/Users/User/Desktop/Egin/opencvTesting/lenna.png" };
+	std::string image_path{ "C:/Users/User/Desktop/Egin/opencvTesting/oldman.jpg" };
 
 	std::filesystem::path pathObj(image_path);
 

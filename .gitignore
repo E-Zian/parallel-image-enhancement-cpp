@@ -47,3 +47,5 @@ x64/
 build/
 out/
 *.png
+*.jpg
+*.jpeg

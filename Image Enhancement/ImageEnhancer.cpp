@@ -7,8 +7,6 @@
 void enhanceImage(const cv::Mat& image, const GaussianKernel& kernel, std::string& fileName, float detailAmplification, bool denoiseInputImage)
 {
 
-	cv::imshow("Original Image", image);
-
 	std::cout << "Image size: " << image.cols << " x " << image.rows << std::endl;
 
 	// Apply Gaussian Blur (Low Pass Filter)
@@ -43,11 +41,8 @@ void enhanceImage(const cv::Mat& image, const GaussianKernel& kernel, std::strin
 	}
 
 	cv::Mat enhancedImage(image.rows, image.cols, image.type(), enhancedImageArray.data());
-	cv::imshow("Enhanced Image", enhancedImage);
-
 
 	cv::imwrite(fileName, enhancedImage);
 
-	cv::waitKey(0);
 }
 
