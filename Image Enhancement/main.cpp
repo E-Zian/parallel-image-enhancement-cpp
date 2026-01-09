@@ -11,7 +11,7 @@ int main() {
 	const GaussianKernel testingKernal{ 5.0f };
 
 	// Reading image
-	std::string image_path = "C:/Users/User/Desktop/Egin/opencvTesting/lenna.png";
+	std::string image_path{ "C:/Users/User/Desktop/Egin/opencvTesting/lenna.png" };
 
 	//cv::Mat image = cv::imread(image_path, cv::IMREAD_GRAYSCALE);
 	//if (image.empty()) {
@@ -19,7 +19,7 @@ int main() {
 	//	return -1;
 	//}
 
-	cv::Mat image = cv::imread(image_path, cv::IMREAD_COLOR);
+	cv::Mat image{ cv::imread(image_path, cv::IMREAD_COLOR) };
 	if (image.empty()) {
 		std::cerr << "Error: Could not load colored image at " << image_path << std::endl;
 		return -1;
