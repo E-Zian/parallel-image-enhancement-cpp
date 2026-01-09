@@ -1,7 +1,7 @@
-#include <chrono>
-#include<opencv2/opencv.hpp>
 #include "GaussianKernel.h"
 #include "ImageEnhancer.h"
+#include<opencv2/opencv.hpp>
+#include <chrono>
 
 void enhanceImage(const cv::Mat& image, const GaussianKernel& kernel, bool applyBlur, float detailAmplification)
 {

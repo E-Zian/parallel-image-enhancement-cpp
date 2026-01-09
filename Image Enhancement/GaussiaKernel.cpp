@@ -2,7 +2,8 @@
 #include <cmath>
 #include <iostream>
 #include <algorithm>
-
+#include <mutex>
+#include <thread>
 
 GaussianKernel::GaussianKernel(float sigma)
 	: m_sigma{ sigma },
@@ -104,37 +105,66 @@ std::vector<unsigned char> GaussianKernel::convolveGray(const std::vector<unsign
 	std::vector<float> horizontalTemp(width * height);
 	std::vector<unsigned char> outputImage(width * height);
 
-	// Each pixel in the image
-	for (int row{ 0 }; row < height; ++row) {
-		for (int col{ 0 }; col < width; ++col) {
-			float sum{ 0.0f };
-			for (int k{ -m_radius }; k <= m_radius; ++k) {
-				int c{ col + k };
-				if (c >= 0 && c < width) {
-					sum += m_kernel1D[k + m_radius] * static_cast<float>(inputImage[c + row * width]);
+	int totalThreads{ static_cast<int>(std::thread::hardware_concurrency()) };
+
+	// Horizontal pass
+	{
+		std::vector<std::jthread> threads;
+
+		auto processRows = [&](int startRow, int lastRow) {
+			for (int row{ startRow }; row <= lastRow; ++row) {
+				for (int col{ 0 }; col < width; ++col) {
+					float sum{ 0.0f };
+					for (int k{ -m_radius }; k <= m_radius; ++k) {
+
+						// The affected columns in horizontal pass
+						int c{ col + k };
+						if (c >= 0 && c < width) {
+							sum += m_kernel1D[k + m_radius] * static_cast<float>(inputImage[c + row * width]);
+						}
+					}
+					horizontalTemp[col + row * width] = sum;
 				}
 			}
-			horizontalTemp[col + row * width] = sum;
+			};
+		int rowsPerThread{ static_cast<int>(height / totalThreads) };
+		for (int threadId{ 0 }; threadId < totalThreads;++threadId) {
+			int startRow{ threadId * rowsPerThread };
+			int lastRow{ threadId == totalThreads - 1 ? height - 1 : startRow + rowsPerThread - 1 };
+			threads.emplace_back(processRows, startRow, lastRow);
 		}
+		
 	}
 
 	// Vertical pass
-	for (int row{ 0 }; row < height; ++row) {
-		for (int col{ 0 }; col < width; ++col) {
-			float sum{ 0.0f };
-			for (int k{ -m_radius }; k <= m_radius; ++k) {
-				int r{ row + k };
-				if (r >= 0 && r < height) {
-					sum += m_kernel1D[k + m_radius] * horizontalTemp[col + r * width];
+	{
+		std::vector<std::jthread> threads;
+		auto processRows = [&](int startRow,int lastRow) {
+			for (int row{ startRow }; row <= lastRow; ++row) {
+				for (int col{ 0 }; col < width; ++col) {
+					float sum{ 0.0f };
+					for (int k{ -m_radius }; k <= m_radius; ++k) {
+						int r{ row + k };
+						if (r >= 0 && r < height) {
+							sum += m_kernel1D[k + m_radius] * horizontalTemp[col + r * width];
+						}
+					}
+					outputImage[col + row * width] =
+						static_cast<unsigned char>(std::clamp(sum, 0.0f, 255.0f));
 				}
 			}
-			outputImage[col + row * width] =
-				static_cast<unsigned char>(std::clamp(sum, 0.0f, 255.0f));
+			};
+
+		int rowsPerThread{ static_cast<int>(height / totalThreads) };
+		for (int threadId{ 0 }; threadId < totalThreads; ++threadId) {
+			int startRow{ threadId * rowsPerThread };
+			int lastRow{ threadId == totalThreads - 1 ? height - 1 : startRow + rowsPerThread - 1 };
+			threads.emplace_back(processRows, startRow, lastRow);
 		}
+		
 	}
 
 	return outputImage;
-
 
 }
 
@@ -145,40 +175,72 @@ std::vector<unsigned char> GaussianKernel::convolveColored(const std::vector<uns
 	std::vector<float> horizontalTemp(width * height * 3);
 	std::vector<unsigned char> outputImage(width * height * 3);
 
+	int totalThreads{ static_cast<int>(std::thread::hardware_concurrency()) };
+
+
 	// Each pixel in the image
 	for (int spectrum{ 0 }; spectrum < 3; ++spectrum) {
-
 		// Horizontal pass
-		for (int row{ 0 }; row < height; ++row) {
-			for (int col{ 0 }; col < width; ++col) {
+		{
+			std::vector<std::jthread> threads;
 
-				float sum{ 0.0f };
-				for (int k{ -m_radius }; k <= m_radius; ++k) {
+			auto processRow = [&](int startRow, int lastRow) {
+				for (int row{ startRow }; row <= lastRow; ++row) {
+					for (int col{ 0 }; col < width; ++col) {
 
-					// The affected columns in horizontal pass
-					int c{ col + k };
-					if (c >= 0 && c < width) {
-						sum += m_kernel1D[k + m_radius] * static_cast<float>(inputImage[(c + row * width) * 3 + spectrum]);
+						float sum{ 0.0f };
+						for (int k{ -m_radius }; k <= m_radius; ++k) {
+
+							// The affected columns in horizontal pass
+							int c{ col + k };
+							if (c >= 0 && c < width) {
+								sum += m_kernel1D[k + m_radius] * static_cast<float>(inputImage[(c + row * width) * 3 + spectrum]);
+							}
+						}
+						horizontalTemp[(col + row * width) * 3 + spectrum] = sum;
 					}
 				}
-				horizontalTemp[(col + row * width) * 3 + spectrum] = sum;
+				};
+
+			int rowsPerThread{ static_cast<int>( height / totalThreads )};
+			for (int threadId{ 0 }; threadId < totalThreads; ++threadId) {
+				int startRow{ threadId * rowsPerThread };
+				int lastRow{ threadId == totalThreads - 1 ? height-1 : startRow + rowsPerThread - 1 };
+				threads.emplace_back(processRow,startRow,lastRow);
 			}
+
 		}
 
 		// Vertical pass
-		for (int row{ 0 }; row < height; ++row) {
-			for (int col{ 0 }; col < width; ++col) {
-				float sum{ 0.0f };
-				for (int k { - m_radius }; k <= m_radius; ++k) {
-					int r{ row + k };
-					if (r >= 0 && r < height) {
-						sum += m_kernel1D[k + m_radius] * horizontalTemp[(col + r * width) * 3 + spectrum];
+		{
+			std::vector<std::jthread> threads;
+
+			auto processRow = [&](int startRow,int lastRow) {
+				for (int row{ startRow }; row <= lastRow; ++row) {
+					for (int col{ 0 }; col < width; ++col) {
+						float sum{ 0.0f };
+						for (int k{ -m_radius }; k <= m_radius; ++k) {
+							int r{ row + k };
+							if (r >= 0 && r < height) {
+								sum += m_kernel1D[k + m_radius] * horizontalTemp[(col + r * width) * 3 + spectrum];
+							}
+						}
+						outputImage[(col + row * width) * 3 + spectrum] =
+							static_cast<unsigned char>(std::clamp(sum, 0.0f, 255.0f));
 					}
 				}
-				outputImage[(col + row * width) * 3 + spectrum] =
-					static_cast<unsigned char>(std::clamp(sum, 0.0f, 255.0f));
+			};
+
+			int rowsPerThread{ static_cast<int>(height / totalThreads) };
+			for (int threadId{ 0 }; threadId < totalThreads; ++threadId) {
+				int startRow{ threadId * rowsPerThread };
+				int lastRow{ threadId == totalThreads - 1 ? height-1 : startRow + rowsPerThread - 1 };
+				threads.emplace_back(processRow, startRow, lastRow);
+
 			}
+
 		}
+		
 	}
 
 

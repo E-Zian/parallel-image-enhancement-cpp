@@ -2,8 +2,8 @@
 #ifndef GAUSSIAN_KERNEL_H
 #define GAUSSIAN_KERNEL_H
 
-#include <vector>
 #include<opencv2/opencv.hpp>
+#include <vector>
 
 class GaussianKernel
 {

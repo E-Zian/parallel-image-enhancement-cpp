@@ -1,9 +1,8 @@
-#include <iostream>
-#include <chrono>
-#include<opencv2/opencv.hpp>
 #include "GaussianKernel.h"
 #include "ImageEnhancer.h"
-
+#include<opencv2/opencv.hpp>
+#include <iostream>
+#include <chrono>
 
 int main() {
 	
