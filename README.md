@@ -21,8 +21,8 @@ This project requires [OpenCV](https://opencv.org/).
 **Example:**
 
 When the build is included into the enviromental path variables
-- C:\> image_enhancement "C:\path\lenna.png" 5.0
-- C:\> image_enhancement "C:\path\lenna.png" 3.0 1 1.5 
+- `C:\> image_enhancement "C:\{path}\{image-name}.{extenstion-name}" 5.0`
+- `C:\> image_enhancement "C:\{path}\{image-name}.{extenstion-name}" 3.0 1 1.5 `
 
 ## Result
 
