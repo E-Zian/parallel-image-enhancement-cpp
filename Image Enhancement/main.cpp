@@ -21,7 +21,7 @@ int main(int argc, char** argv) {
 		return 1;
 	}
 
-	std::cout <<"image path : " << args->image_path;
+	std::cout <<"Image path : " << args->image_path;
 
 	// Kernel initialisation
 	const GaussianKernel testingKernal{ args->sigma };

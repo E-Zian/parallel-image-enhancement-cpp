@@ -14,7 +14,7 @@ void downloadImage(const cv::Mat& image, const std::string& fileName);
 void enhanceImage(const cv::Mat& image, const GaussianKernel& kernel, std::string& fileName, float detailAmplification, bool denoiseInputImage)
 {
 
-	std::cout << "Image size: " << image.cols << " x " << image.rows << std::endl;
+	std::cout << "\nImage size: " << image.cols << " x " << image.rows << std::endl;
 
 	// Apply Gaussian Blur (Low Pass Filter)
 	std::vector<unsigned char> lowPassImageArray(image.cols * image.rows * image.channels());
@@ -78,7 +78,7 @@ void downloadImage(const cv::Mat& image,const std::string& fileName) {
 	bool success{ cv::imwrite(fullPath.string(), image) };
 
 	if (success) {
-		std::cout << "Image downloaded into " << fullPath.string() << "\n";
+		std::cout << "Image downloaded into : " << fullPath.string() << "\n";
 	}
 	else {
 		std::cerr << "Failed to download image" << "\n";
