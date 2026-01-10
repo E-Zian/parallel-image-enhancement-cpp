@@ -67,10 +67,12 @@ std::optional< ProgramArguments> parseArgs(int argc, char** argv) {
 		args.image_path = argv[1];
 		args.sigma = std::stof(argv[2]);
 
+		// GrayScale
 		if (argc >= 4) {
 			args.grayScale = (std::stoi(argv[3]) != 0);
 		}
 
+		// detailAmplification
 		if (argc >= 5) {
 			args.detailAmplification = std::stof(argv[4]);
 		}
@@ -79,6 +81,7 @@ std::optional< ProgramArguments> parseArgs(int argc, char** argv) {
 			args.detailAmplification = 1.0f;
 		}
 
+		// Denoise
 		if (argc >= 6) {
 			args.denoiseInputImage = (std::stoi(argv[5]) != 0);
 		}
