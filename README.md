@@ -13,8 +13,8 @@ This project requires [OpenCV](https://opencv.org/).
 
 **Parameters:**
 - `<image_path>` : Path to the input image (e.g., `C:\Images\lenna.png`)
-- `<sigma>` : sigma value for kernel (float), e.g., `1.0`
-- `<grayScale>` : reads the image as grayscale (bool), e.g., `1`
+- `<sigma>` : Value used for calculation of the kernel (float), e.g., `1.0`
+- `<grayScale>` : Reads the image as grayscale (bool), e.g., `1`
 - `<detailAmp> *optional` : Enhancement factor, used as the k value for high pass (float), e.g., `1.0` 
 - `<denoise> *optional` : Apply initial blur for denoising before getting low pass (boolean), e.g., `1` 
 
@@ -26,7 +26,7 @@ When the build is included into the enviromental path variables
 
 ## Result
 
-Results may be adjusted by changing the kernel and detailAmp values
+Results may be adjusted by changing the sigma and detailAmp values
 <table>
 <tr>
 <td>Original</td>
