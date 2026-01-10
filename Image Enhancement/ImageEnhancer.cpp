@@ -1,8 +1,15 @@
+// For getenv
+#define _CRT_SECURE_NO_WARNINGS
+
 #include "GaussianKernel.h"
 #include "ImageEnhancer.h"
 #include<opencv2/opencv.hpp>
 #include <chrono>
+#include <filesystem>
 
+namespace fs = std::filesystem;
+
+void downloadImage(const cv::Mat& image, const std::string& fileName);
 
 void enhanceImage(const cv::Mat& image, const GaussianKernel& kernel, std::string& fileName, float detailAmplification, bool denoiseInputImage)
 {
@@ -41,8 +48,41 @@ void enhanceImage(const cv::Mat& image, const GaussianKernel& kernel, std::strin
 	}
 
 	cv::Mat enhancedImage(image.rows, image.cols, image.type(), enhancedImageArray.data());
-
-	cv::imwrite(fileName, enhancedImage);
+	downloadImage(enhancedImage, fileName);
 
 }
 
+void downloadImage(const cv::Mat& image,const std::string& fileName) {
+
+	fs::path downloadPath{ fs::path(getenv("USERPROFILE")) / "Downloads" };
+
+	// Check if downlaod path exist
+	if (!fs::exists(downloadPath)) {
+		std::cout << "download folder was not found";
+		return;
+	}
+
+	fs::path fullPath{ downloadPath / fileName };
+	std::string fileStem{ fullPath.stem().string()};
+	std::string fileExtenstion{ fullPath.extension().string() };
+	
+	int counter{ 0 };
+
+	while (fs::is_regular_file(fullPath)) {
+		++counter;
+		std::string newFileName{ fileStem + "(" + std::to_string(counter) + ")" + fileExtenstion };
+		fullPath = downloadPath / newFileName;
+
+	}
+
+	bool success{ cv::imwrite(fullPath.string(), image) };
+
+	if (success) {
+		std::cout << "Image downloaded into " << fullPath.string() << "\n";
+	}
+	else {
+		std::cerr << "Failed to download image" << "\n";
+	}
+
+
+}
