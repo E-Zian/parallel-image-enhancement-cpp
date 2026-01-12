@@ -12,7 +12,7 @@ This project requires [OpenCV](https://opencv.org/).
 ## How to Run
 
 **Parameters:**
-- `<image_path>` : Path to the input image (e.g., `C:\Images\lenna.png`)
+- `<imagePath>` : Path to the input image (e.g., `C:\Images\lenna.png`)
 - `<sigma>` : Value used for calculation of the kernel (float), e.g., `1.0`
 - `<grayScale> *optional` : Reads the image as grayscale (bool), e.g., `1`
 - `<detailAmp> *optional` : Enhancement factor, used as the k value for high pass (float), e.g., `1.0` 
