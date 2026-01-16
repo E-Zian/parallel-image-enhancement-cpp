@@ -20,8 +20,8 @@ GaussianKernel::GaussianKernel(float sigma)
 }
 
 void GaussianKernel::display2DKernel() const {
-	for (int i{ 0 }; i < m_kernelDiameter; ++i) {
-		for (int j{ 0 }; j < m_kernelDiameter; ++j) {
+	for (int i{  }; i < m_kernelDiameter; ++i) {
+		for (int j{  }; j < m_kernelDiameter; ++j) {
 			std::cout << m_kernel[i * m_kernelDiameter + j] << " ";
 		}
 		std::cout << std::endl;
@@ -29,23 +29,23 @@ void GaussianKernel::display2DKernel() const {
 }
 
 void GaussianKernel::display1DKernel() const {
-	for (int i{ 0 }; i < m_kernelDiameter; ++i) {
+	for (int i{  }; i < m_kernelDiameter; ++i) {
 		std::cout << m_kernel1D[i] << " ";
 	}
 }
 
 void GaussianKernel::generate1DKernels() {
-	float sum { 0.0f};
+	float sum{ };
 
 	// Generate 1d kernel
-	for (int col { -m_radius } ; col <= m_radius; ++col) {
+	for (int col{ -m_radius }; col <= m_radius; ++col) {
 		float value = std::exp(-(col * col) / (2.0f * m_sigma * m_sigma));
-		m_kernel1D[col + m_radius] =value;
+		m_kernel1D[col + m_radius] = value;
 		sum += value;
 	}
 
 	// Normalize 1d kernel
-	for (int i{ 0 }; i < m_kernelDiameter; ++i) {
+	for (int i{  }; i < m_kernelDiameter; ++i) {
 		m_kernel1D[i] /= sum;
 	}
 
@@ -56,10 +56,10 @@ float GaussianKernel::unnormalizedGaussian(int x, int y) {
 }
 
 void GaussianKernel::generate2DKernel() {
-	float sum = 0.0f;
+	float sum{};
 
 	// Calculate unnormalized values and sum them
-	for (int row { -m_radius } ; row <= m_radius; ++row) {
+	for (int row{ -m_radius }; row <= m_radius; ++row) {
 		for (int col = -m_radius; col <= m_radius; ++col) {
 			float value{ unnormalizedGaussian(col, row) };
 			sum += value;
@@ -68,27 +68,27 @@ void GaussianKernel::generate2DKernel() {
 	}
 
 	// Normalize the kernel
-	for (int i{ 0 }; i < m_kernelSize; ++i) {
+	for (int i{  }; i < m_kernelSize; ++i) {
 		m_kernel[i] /= sum;
 	}
 }
 
 std::vector<unsigned char> GaussianKernel::convolve(const cv::Mat& image) const {
 	int width{ image.cols };
-	int height{ image.rows } ;
+	int height{ image.rows };
 	if (image.channels() == 3) {
 		// Colored image
 		std::vector<unsigned char> inputImage(
-			image.data,                       
-			image.data + image.total() * image.channels()         
+			image.data,
+			image.data + image.total() * image.channels()
 		);
 		return convolveColored(inputImage, width, height);
 	}
 	else if (image.channels() == 1) {
 		// Grayscale image
 		std::vector<unsigned char> inputImage(
-			image.data,                       
-			image.data + image.total()          
+			image.data,
+			image.data + image.total()
 		);
 		return convolveGray(inputImage, width, height);
 	}
@@ -112,7 +112,7 @@ std::vector<unsigned char> GaussianKernel::convolveGray(const std::vector<unsign
 
 		auto processRows = [&](int startRow, int lastRow) {
 			for (int row{ startRow }; row <= lastRow; ++row) {
-				for (int col{ 0 }; col < width; ++col) {
+				for (int col{  }; col < width; ++col) {
 					float sum{ 0.0f };
 					for (int k{ -m_radius }; k <= m_radius; ++k) {
 
@@ -127,21 +127,21 @@ std::vector<unsigned char> GaussianKernel::convolveGray(const std::vector<unsign
 			}
 			};
 		int rowsPerThread{ static_cast<int>(height / totalThreads) };
-		for (int threadId{ 0 }; threadId < totalThreads;++threadId) {
+		for (int threadId{  }; threadId < totalThreads; ++threadId) {
 			int startRow{ threadId * rowsPerThread };
 			int lastRow{ threadId == totalThreads - 1 ? height - 1 : startRow + rowsPerThread - 1 };
 			threads.emplace_back(processRows, startRow, lastRow);
 		}
-		
+
 	}
 
 	// Vertical pass
 	{
 		std::vector<std::jthread> threads;
-		auto processRows = [&](int startRow,int lastRow) {
+		auto processRows = [&](int startRow, int lastRow) {
 			for (int row{ startRow }; row <= lastRow; ++row) {
-				for (int col{ 0 }; col < width; ++col) {
-					float sum{ 0.0f };
+				for (int col{ }; col < width; ++col) {
+					float sum{ };
 					for (int k{ -m_radius }; k <= m_radius; ++k) {
 						int r{ row + k };
 						if (r >= 0 && r < height) {
@@ -155,12 +155,12 @@ std::vector<unsigned char> GaussianKernel::convolveGray(const std::vector<unsign
 			};
 
 		int rowsPerThread{ static_cast<int>(height / totalThreads) };
-		for (int threadId{ 0 }; threadId < totalThreads; ++threadId) {
+		for (int threadId{ }; threadId < totalThreads; ++threadId) {
 			int startRow{ threadId * rowsPerThread };
 			int lastRow{ threadId == totalThreads - 1 ? height - 1 : startRow + rowsPerThread - 1 };
 			threads.emplace_back(processRows, startRow, lastRow);
 		}
-		
+
 	}
 
 	return outputImage;
@@ -178,16 +178,16 @@ std::vector<unsigned char> GaussianKernel::convolveColored(const std::vector<uns
 
 
 	// Each pixel in the image
-	for (int spectrum{ 0 }; spectrum < 3; ++spectrum) {
+	for (int spectrum{ }; spectrum < 3; ++spectrum) {
 		// Horizontal pass
 		{
 			std::vector<std::jthread> threads;
 
 			auto processRow = [&](int startRow, int lastRow) {
 				for (int row{ startRow }; row <= lastRow; ++row) {
-					for (int col{ 0 }; col < width; ++col) {
+					for (int col{  }; col < width; ++col) {
 
-						float sum{ 0.0f };
+						float sum{ };
 						for (int k{ -m_radius }; k <= m_radius; ++k) {
 
 							// The affected columns in horizontal pass
@@ -201,11 +201,11 @@ std::vector<unsigned char> GaussianKernel::convolveColored(const std::vector<uns
 				}
 				};
 
-			int rowsPerThread{ static_cast<int>( height / totalThreads )};
-			for (int threadId{ 0 }; threadId < totalThreads; ++threadId) {
+			int rowsPerThread{ static_cast<int>(height / totalThreads) };
+			for (int threadId{ }; threadId < totalThreads; ++threadId) {
 				int startRow{ threadId * rowsPerThread };
-				int lastRow{ threadId == totalThreads - 1 ? height-1 : startRow + rowsPerThread - 1 };
-				threads.emplace_back(processRow,startRow,lastRow);
+				int lastRow{ threadId == totalThreads - 1 ? height - 1 : startRow + rowsPerThread - 1 };
+				threads.emplace_back(processRow, startRow, lastRow);
 			}
 
 		}
@@ -214,10 +214,10 @@ std::vector<unsigned char> GaussianKernel::convolveColored(const std::vector<uns
 		{
 			std::vector<std::jthread> threads;
 
-			auto processRow = [&](int startRow,int lastRow) {
+			auto processRow = [&](int startRow, int lastRow) {
 				for (int row{ startRow }; row <= lastRow; ++row) {
-					for (int col{ 0 }; col < width; ++col) {
-						float sum{ 0.0f };
+					for (int col{ }; col < width; ++col) {
+						float sum{ };
 						for (int k{ -m_radius }; k <= m_radius; ++k) {
 							int r{ row + k };
 							if (r >= 0 && r < height) {
@@ -228,18 +228,18 @@ std::vector<unsigned char> GaussianKernel::convolveColored(const std::vector<uns
 							static_cast<unsigned char>(std::clamp(sum, 0.0f, 255.0f));
 					}
 				}
-			};
+				};
 
 			int rowsPerThread{ static_cast<int>(height / totalThreads) };
-			for (int threadId{ 0 }; threadId < totalThreads; ++threadId) {
+			for (int threadId{ }; threadId < totalThreads; ++threadId) {
 				int startRow{ threadId * rowsPerThread };
-				int lastRow{ threadId == totalThreads - 1 ? height-1 : startRow + rowsPerThread - 1 };
+				int lastRow{ threadId == totalThreads - 1 ? height - 1 : startRow + rowsPerThread - 1 };
 				threads.emplace_back(processRow, startRow, lastRow);
 
 			}
 
 		}
-		
+
 	}
 
 

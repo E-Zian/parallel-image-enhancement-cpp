@@ -35,14 +35,14 @@ void enhanceImage(const cv::Mat& image, const GaussianKernel& kernel, std::strin
 	// High pass image
 	std::vector<int> highPassImageArray(image.cols * image.rows * image.channels());
 
-	for (int i{ 0 }; i < image.rows * image.cols * image.channels(); ++i) {
+	for (int i{ }; i < image.rows * image.cols * image.channels(); ++i) {
 		highPassImageArray[i] = static_cast<int>(image.data[i]) - static_cast<int>(lowPassImageArray[i]);
 	}
 
 	// Enhanced image
 	std::vector<unsigned char> enhancedImageArray(image.cols * image.rows * image.channels());
 
-	for (int i{ 0 }; i < image.rows * image.cols * image.channels(); ++i) {
+	for (int i{ }; i < image.rows * image.cols * image.channels(); ++i) {
 		float enhanced = static_cast<float>(image.data[i]) + highPassImageArray[i] * detailAmplification;
 		enhancedImageArray[i] = static_cast<unsigned char>(std::clamp(enhanced, 0.0f, 255.0f));
 	}
@@ -66,7 +66,7 @@ void downloadImage(const cv::Mat& image,const std::string& fileName) {
 	std::string fileStem{ fullPath.stem().string()};
 	std::string fileExtenstion{ fullPath.extension().string() };
 	
-	int counter{ 0 };
+	int counter{ };
 
 	while (fs::is_regular_file(fullPath)) {
 		++counter;
